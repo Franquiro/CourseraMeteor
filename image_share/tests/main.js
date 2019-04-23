@@ -1,6 +1,5 @@
 import assert from "assert";
 import { SSL_OP_DONT_INSERT_EMPTY_FRAGMENTS } from "constants";
-Images=new Mongo.Collection("images");
 describe("image_share", function () {
   it("package.json has correct name", async function () {
     const { name } = await import("../package.json");
