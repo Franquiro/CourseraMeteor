@@ -43,6 +43,8 @@ Template.images.events({
   } 
     
 });
+
+//eventos del formulario
 Template.image_add_form.events({
   'submit .js-add-image':function(event){
     var img_src,img_label;
