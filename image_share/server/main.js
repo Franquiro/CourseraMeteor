@@ -4,24 +4,16 @@ console.log(Images.find().count());
 Meteor.startup(() => {
   // code to run on server at startup
   if(Images.find().count()==0){
-    Images.insert({
-        img_src:"img/laptops.jpg",
-        img_alt:"some laptops",
-        img_label:"Lan Party",
-        img_description:"Set of laptops ready to game!"
-      });
+    for(var i=1 ; i<23 ; i++){
       Images.insert({
-        img_src:"img/bass.jpg",
-        img_alt:"some bass",
-        img_label:"Bass",
-        img_description:"image of bass"
+        img_src:"img/img_"+i+".jpg",
+        img_alt:"Imagen"+i,
+        img_label:"Imagen "+i,
+        img_description:"Imagen agregada de manera automatica"
       });
-      Images.insert({
-        img_src:"img/beard.jpg",
-        img_alt:"some beard",
-        img_label:"Beard",
-        img_description:"image of beard"
-      });
+    }
+    console.log(`Startup script says: 
+    added ${Images.find().count()} images to db`);
 }
   console.log("I am the server");
 });

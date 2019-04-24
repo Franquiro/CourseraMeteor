@@ -1,4 +1,11 @@
+@import "barbatus_stars-rating";
 body {
   padding: 10px;
   font-family: sans-serif;
+}
+.thumbnail{
+  height: 500px;
+}
+.thumbnail img{
+  height:100%;
 }
