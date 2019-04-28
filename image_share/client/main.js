@@ -9,7 +9,7 @@ Images = new Mongo.Collection("images");
 //IMAGENES
 
 //Busco todas las imagenes de la base de datos y las ordeno por mas nueva y mayor rating
-Template.images.helpers({images:Images.find({},{sort:{createdOn:-1, rating:-1}})}); //encuentro las imagenes en la BDD
+Template.images.helpers({images:Images.find({},{sort:{img_year:1}})}); //encuentro las imagenes en la BDD
 // sort:{rating:-1} ordena las imágenes de mayor rating a menor rating.
 
 
@@ -55,18 +55,35 @@ Template.images.events({
 //eventos del formulario
 Template.image_add_form.events({
   'submit .js-add-image':function(event){
-    var img_src,img_label;
+    var img_src,img_label,img_year;
     img_src=event.target.img_src.value;
     img_label=event.target.img_label.value;
+    img_year = event.target.img_year.value;
     console.log(img_src,img_label);
 
     Images.insert({
       img_src:img_src,
-      img_alt:"added image",
+      img_alt: img_label,
       img_label:img_label,
+      img_year:img_year,
       createdOn:new Date()
     });
     $('#image_add_form').modal('hide');
     return false;
   }
+});
+//template del body completo
+Template.body.helpers({username:function(){
+  if(Meteor.user()){
+    return Meteor.user().emails[0].address;
+  }
+  else{
+    return "Invitado";
+  }
+  /*try{
+    console.log(Meteor.user().emails[0]);
+  }catch{
+    console.log("usuario no cargado");
+  }*/
+}
 });
