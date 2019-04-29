@@ -16,7 +16,7 @@
     <h3>Sites you have added:</h3>
     <ul>
     {{#each all_websites}}
-    <li><a href="{{url}}">{{url}} </a>(added by ... your code here ... )</li>
+    <li><a href="{{url}}">{{url}} </a>(added by {{safer_email createdBy}} )</li>
     {{/each}}
     </ul>
 </template>

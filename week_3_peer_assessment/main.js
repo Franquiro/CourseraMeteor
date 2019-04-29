@@ -8,11 +8,14 @@ if (Meteor.isClient){
         // this runs when they click the add button... you need to compete it
      'click .js-add-site':function(event){
          var url = $('#url_input').val();// get the form value using jquery...
-         var  user = "";
+         var  user = "anonymous person";
          // PUT YOUR CODE HERE!!
          // set up the user variable so that it contains
          // the string anonymous person if they are not logged in
          // or their email address if they are logged in
+         if(Meteor.user()){
+             user = Meteor.user().emails[0].address;
+         }
 
          var site = {"url":url,
                      "createdOn":new Date(),
