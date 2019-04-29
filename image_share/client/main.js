@@ -1,27 +1,74 @@
 import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
+import { Session } from 'meteor/session'
 
 import './main.html';
 
 Images = new Mongo.Collection("images");
+Session.set("imageLimit",8); //variable de sesion para mostrar unicamente 8 imagenes.
+//scroll event
+$(window).scroll(event => console.log(new Date()));
+
+//LOGIN / REGISTRATION FORM
+Accounts.ui.config({
+  passwordSignupFields:"USERNAME_AND_EMAIL"
+});
 
 
 //IMAGENES
-
 //Busco todas las imagenes de la base de datos y las ordeno por mas nueva y mayor rating
-Template.images.helpers({images:Images.find({},{sort:{img_year:1}})}); //encuentro las imagenes en la BDD
+Template.images.helpers({
+  images:function(){
+    if(Session.get("userFilter")){
+      //THEY SET A FILTER
+      return Images.find({createdBy:Session.get("userFilter")},{sort:{img_order:1}});
+    }
+    return Images.find({img_seen:false},{sort:{img_order:1}});
+  },
+  filtering_images:function(){
+    if(Session.get("userFilter")){
+      return true;
+    }
+    return false;
+  },
+  getFilterUser:function(){
+    if(Session.get("userFilter")){
+      var user = Meteor.users.findOne({_id:Session.get("userFilter")});
+      return user.username;
+    }
+    return false;
+  },
+  getUser:function(user_id){
+    var user = Meteor.users.findOne({_id:user_id});
+    if(user)return user.username;
+    else return "anonymous";
+  },
+
+}); //encuentro las imagenes en la BDD
 // sort:{rating:-1} ordena las imágenes de mayor rating a menor rating.
 
 
 //detallo los eventos de las imagenes
 Template.images.events({
   //cuando clickeo una imagen, se achica a 50px
-  'click .js-image':function(event){
+  /*'click .js-image':function(event){
     $(event.target).css("width","50px");
-  },
+  },*/
   //cuando clickeo el boton de delete, hago una animacion de ocultar,
   //y la borro de la base de datos.
   //la encuentro en la base de datos por su id
+  'click .js-hide-image':function(event){
+    var image_id = this._id;
+    //console.log(image_id);//imprime el id de la imagen en la BDD
+    //console.log(Images.find().count());
+    $("#"+image_id).hide('slow',function(){
+      Images.update({_id:image_id},{$set:{img_seen:true}});//elimina la imagen con el  id de la BDD
+      //console.log(Images.find().count());
+    }
+    
+    );
+    
+  },
   'click .js-del-image':function(event){
     var image_id = this._id;
     //console.log(image_id);//imprime el id de la imagen en la BDD
@@ -33,6 +80,12 @@ Template.images.events({
     
     );
     
+  },
+  'click .js-set-image-filter':function(event){
+    Session.set("userFilter", this.createdBy);
+  },
+  'click .js-unset-image-filter':function(event){
+    Session.set("userFilter", undefined);
   },
   // cuando clickeo una estrellita, le agrego el rating a la imagen, con la cantidad de estrellitas
   'click .js-rate-image':function(event){
@@ -60,14 +113,17 @@ Template.image_add_form.events({
     img_label=event.target.img_label.value;
     img_year = event.target.img_year.value;
     console.log(img_src,img_label);
-
-    Images.insert({
-      img_src:img_src,
-      img_alt: img_label,
-      img_label:img_label,
-      img_year:img_year,
-      createdOn:new Date()
-    });
+    if(Meteor.user()){
+      Images.insert({
+        img_src:img_src,
+        img_alt: img_label+" (movie poster)",
+        img_label:img_label,
+        img_year:img_year,
+        img_seen:false,
+        createdBy:Meteor.user()._id,
+        createdOn:new Date()
+      });
+    }
     $('#image_add_form').modal('hide');
     return false;
   }
@@ -75,7 +131,7 @@ Template.image_add_form.events({
 //template del body completo
 Template.body.helpers({username:function(){
   if(Meteor.user()){
-    return Meteor.user().emails[0].address;
+    return Meteor.user().username;
   }
   else{
     return "Invitado";
