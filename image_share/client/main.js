@@ -6,8 +6,25 @@ import './main.html';
 
 Images = new Mongo.Collection("images");
 Session.set("imageLimit",8); //variable de sesion para mostrar unicamente 8 imagenes.
+lastScrollTop = 0; //posición en la que estoy al arrancar el scroll
 //scroll event
-$(window).scroll(event => console.log(new Date()));
+$(window).scroll(event => {
+  // tests if we are near the bottom of the window
+  if($(window).scrollTop()+$(window).height() > $(document).height() -100){
+      //check where we are
+    var scrollTop = $(this).scrollTop();
+    //test if im going down
+    if(scrollTop > lastScrollTop){
+      //cambio el limite de imagenes a limite+X
+      Session.set("imageLimit",Session.get("imageLimit")+4);
+      console.log("estoy bajando");
+    }
+    else console.log("estoy subiendo");
+    
+    lastScrollTop = scrollTop;
+
+  }
+});
 
 //LOGIN / REGISTRATION FORM
 Accounts.ui.config({
@@ -23,7 +40,7 @@ Template.images.helpers({
       //THEY SET A FILTER
       return Images.find({createdBy:Session.get("userFilter")},{sort:{img_order:1}});
     }
-    return Images.find({img_seen:false},{sort:{img_order:1}});
+    return Images.find({img_seen:false},{sort:{img_order:1},limit:Session.get("imageLimit")});
   },
   filtering_images:function(){
     if(Session.get("userFilter")){
