@@ -1,6 +1,4 @@
-import { Meteor } from 'meteor/meteor';
-Images = new Mongo.Collection("images");
-let movies=[
+var movies=[
     {
         img_src:"img_marvel/iron_man.jpg",
         img_alt: "Iron Man (movie poster)",
@@ -222,17 +220,3 @@ let movies=[
         createdOn:new Date()
     }
   ];
-
-
-console.log(Images.find().count());
-Meteor.startup(() => {
-  // code to run on server at startup
-  if(Images.find().count()==0){
-    for(var i=0 ; i<movies.length ; i++){
-      Images.insert(movies[i]);
-    }
-    console.log(`Startup script says: 
-    added ${Images.find().count()} images to db`);
-}
-  console.log("I am the server");
-});

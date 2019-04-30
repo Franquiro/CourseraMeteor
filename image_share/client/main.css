@@ -2,9 +2,11 @@
 body {
   padding: 10px;
   font-family: sans-serif;
+  background-color: #45a5d1;
 }
 .thumbnail{
   height: 550px;
+  background-color: #70b1cf;
 }
 .thumbnail-img{
   max-height:300px;
