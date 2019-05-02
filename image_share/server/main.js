@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 Images = new Mongo.Collection("images");
+//Users = new Mongo.Collection("users");
 let movies=[
     {
         img_src:"img_marvel/iron_man.jpg",
@@ -224,9 +225,13 @@ let movies=[
   ];
 
 
+
 console.log(Images.find().count());
 Meteor.startup(() => {
   // code to run on server at startup
+  for(let i = 0; i<movies.length;i++){
+    movies[i].createdBy="Z9PhogMWdaaffsuG4";
+    }
   if(Images.find().count()==0){
     for(var i=0 ; i<movies.length ; i++){
       Images.insert(movies[i]);
@@ -235,4 +240,19 @@ Meteor.startup(() => {
     added ${Images.find().count()} images to db`);
 }
   console.log("I am the server");
+});
+
+Images.allow({
+    insert:(userId,doc)=>{
+        if(userId == doc.createdBy){
+            return true;
+        }
+        return false;
+    },
+    update:(userId,doc)=>{
+        if(userId == doc.createdBy)
+            return true;
+        return false;
+    },
+    remove:(userId,doc)=>true
 });

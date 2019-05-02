@@ -4,7 +4,38 @@ import { Session } from 'meteor/session'
 
 import './main.html';
 
+// routing
+Router.configure({
+  layoutTemplate:'AplicationLayout'
+});
+
+Router.route('/',function () {
+  this.render('welcome',{
+    to:"main"
+  });
+});
+Router.route('/images',function () {
+  this.render('navbar',{
+    to:"navbar"
+  });
+  this.render('images',{
+    to:"main"
+  });
+});
+Router.route("/singleImage/:_id",function(){
+  this.render('navbar',{
+    to:"navbar"
+  });
+  this.render('singleImage',{
+    to:"main",
+    data:function(){
+      return Images.findOne({_id:this.params._id});
+    }
+  });
+});
+// END ROUTING 
 Images = new Mongo.Collection("images");
+// INFINITE SCROLL
 Session.set("imageLimit",8); //variable de sesion para mostrar unicamente 8 imagenes.
 lastScrollTop = 0; //posición en la que estoy al arrancar el scroll
 //scroll event

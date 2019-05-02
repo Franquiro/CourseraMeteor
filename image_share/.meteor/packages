@@ -23,4 +23,4 @@ barbatus:stars-rating
 accounts-ui
 accounts-password
 session
-insecure
+iron:router
